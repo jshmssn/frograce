@@ -88,7 +88,7 @@ export function RacePage({ state, myId, send }: RacePageProps) {
       {/* My stats bar */}
       {me && (
         <div className="my-stats">
-          <span>Progress: <strong>{Math.round(me.progress)}%</strong></span>
+          <span>Correct Progress: <strong>{Math.round(me.progress)}%</strong></span>
           <span>WPM: <strong>{me.wpm}</strong></span>
           <span>Accuracy: <strong>{me.accuracy}%</strong></span>
         </div>

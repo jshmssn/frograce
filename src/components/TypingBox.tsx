@@ -46,6 +46,14 @@ export function TypingBox({ text, disabled, onProgress, onFinished, raceStartedA
     return { wpm, accuracy };
   }, [text]);
 
+  function getCorrectPrefixLength(typedSoFar: string) {
+    let correctPrefix = 0;
+    while (correctPrefix < typedSoFar.length && typedSoFar[correctPrefix] === text[correctPrefix]) {
+      correctPrefix++;
+    }
+    return correctPrefix;
+  }
+
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     if (disabled || done) return;
 
@@ -53,6 +61,9 @@ export function TypingBox({ text, disabled, onProgress, onFinished, raceStartedA
 
     // Only allow typing that matches text length
     if (val.length > text.length) return;
+    // Lock input to append-only so previous mistakes cannot be edited away.
+    if (val.length < typed.length) return;
+    if (!val.startsWith(typed)) return;
 
     const now = Date.now();
     if (!startedAt) setStartedAt(now);
@@ -60,7 +71,8 @@ export function TypingBox({ text, disabled, onProgress, onFinished, raceStartedA
 
     setTyped(val);
 
-    const progress = Math.round((val.length / text.length) * 100);
+    const correctPrefixLength = getCorrectPrefixLength(val);
+    const progress = Math.round((correctPrefixLength / text.length) * 100);
     const { wpm, accuracy } = calcStats(val, elapsed);
 
     // Throttle progress updates to every ~1%
@@ -73,6 +85,12 @@ export function TypingBox({ text, disabled, onProgress, onFinished, raceStartedA
     if (val === text) {
       setDone(true);
       onFinished(wpm, accuracy);
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Backspace" || e.key === "Delete") {
+      e.preventDefault();
     }
   }
 
@@ -107,6 +125,7 @@ export function TypingBox({ text, disabled, onProgress, onFinished, raceStartedA
         className="typing-input"
         value={typed}
         onChange={handleInput}
+        onKeyDown={handleKeyDown}
         disabled={disabled || done}
         autoComplete="off"
         autoCorrect="off"
