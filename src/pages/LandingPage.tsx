@@ -46,7 +46,7 @@ export function LandingPage({ onCreateRoom, onJoinRoom }: LandingPageProps) {
           <label className="field-label">YOUR NAME</label>
           <input
             className="field-input"
-            placeholder="FluxScriptNX"
+            placeholder="Ooga Booga"
             value={name}
             maxLength={20}
             onChange={e => setName(e.target.value)}
