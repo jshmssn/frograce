@@ -15,24 +15,7 @@ export function RacePage({ state, myId, send }: RacePageProps) {
   const [timeLeft, setTimeLeft] = useState(state.settings.timeLimit);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Countdown display
-  if (state.phase === "countdown") {
-    return (
-      <div className="countdown-screen">
-        <div className="countdown-bg-frogs" aria-hidden>
-          {["🐸","🐸","🐸"].map((f,i)=><span key={i} className={`bg-frog bg-frog-${i}`}>{f}</span>)}
-        </div>
-        <div className="countdown-box">
-          <p className="countdown-label">RACE STARTS IN</p>
-          <div className="countdown-number">
-            {state.countdownValue <= 0 ? "GO!" : state.countdownValue}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Timer
+  // Timer — must be before any early returns (Rules of Hooks)
   useEffect(() => {
     if (state.phase !== "racing" || !state.raceStartedAt) return;
 
@@ -48,6 +31,23 @@ export function RacePage({ state, myId, send }: RacePageProps) {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [state.phase, state.raceStartedAt]);
+
+  // Countdown display — early return AFTER all hooks
+  if (state.phase === "countdown") {
+    return (
+      <div className="countdown-screen">
+        <div className="countdown-bg-frogs" aria-hidden>
+          {["🐸","🐸","🐸"].map((f,i)=><span key={i} className={`bg-frog bg-frog-${i}`}>{f}</span>)}
+        </div>
+        <div className="countdown-box">
+          <p className="countdown-label">RACE STARTS IN</p>
+          <div className="countdown-number">
+            {state.countdownValue <= 0 ? "GO!" : state.countdownValue}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   function handleProgress(progress: number, wpm: number, accuracy: number) {
     send({ type: "progress", progress, wpm, accuracy });
