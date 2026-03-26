@@ -114,7 +114,7 @@ export function TypingBox({ text, disabled, onProgress, onFinished, raceStartedA
       >
         {chars.map(({ char, cls }, i) => (
           <span key={i} className={cls}>
-            {char === " " ? "\u00A0" : char}
+            {char}
           </span>
         ))}
       </div>

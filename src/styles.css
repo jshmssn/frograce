@@ -730,7 +730,9 @@ input[type=number].field-input { font-size: 1.1rem; }
   font-size: 0.95rem;
   line-height: 1.85;
   letter-spacing: 0.02em;
-  word-break: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
   user-select: none;
   max-height: 220px;
   overflow-y: auto;
