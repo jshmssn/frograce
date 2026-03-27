@@ -1,92 +1,41 @@
-// Generates a passage of approximately `wordCount` words from a pool of
-// common English words. We avoid importing heavy NLP libs to keep bundle small.
+// Generates a story-like passage of approximately `wordCount` words.
+// We keep the content local and deterministic enough for typing practice,
+// without pulling in any external text generation libraries.
 
-const WORD_POOL = `
-the quick brown fox jumps over the lazy dog a stitch in time saves nine
-all that glitters is not gold every cloud has a silver lining actions speak
-louder than words beauty is in the eye of the beholder better late than never
-birds of a feather flock together curiosity killed the cat don't count your
-chickens before they hatch don't judge a book by its cover every dog has its
-day fortune favors the bold great minds think alike haste makes waste honesty
-is the best policy ignorance is bliss it takes two to tango keep your friends
-close and your enemies closer knowledge is power laughter is the best medicine
-let sleeping dogs lie lightning never strikes the same place twice look before
-you leap money is the root of all evil necessity is the mother of invention
-no pain no gain once bitten twice shy practice makes perfect prevention is
-better than cure quality over quantity Rome was not built in a day silence is
-golden strike while the iron is hot the ball is in your court the best things
-in life are free the early bird catches the worm the grass is always greener
-the pen is mightier than the sword the proof is in the pudding there is no
-place like home time flies when you are having fun two wrongs do not make
-a right united we stand divided we fall variety is the spice of life when in
-Rome do as the Romans do you cannot have your cake and eat it too absence
-makes the heart grow fonder actions have consequences always look on the
-bright side of life an apple a day keeps the doctor away appearances can be
-deceiving as you sow so shall you reap ask not what your country can do for
-you ask what you can do for your country bite the bullet burn the midnight oil
-by the skin of your teeth cleanliness is next to godliness cut the mustard
-dead men tell no tales do not bite the hand that feeds you do not put all your
-eggs in one basket do unto others as you would have them do unto you easy come
-easy go every action has an equal and opposite reaction expect the unexpected
-failure is the stepping stone to success familiarity breeds contempt first
-impressions are lasting impressions fool me once shame on you fool me twice
-shame on me get a taste of your own medicine give credit where credit is due
-go the extra mile good things come to those who wait half a loaf is better
-than none he who hesitates is lost history repeats itself hope for the best
-prepare for the worst if at first you do not succeed try try again if the
-shoe fits wear it in the middle of every difficulty lies opportunity it is
-always darkest before the dawn it is not over until it is over judge not that
-you be not judged keep your chin up kill two birds with one stone know which
-way the wind blows learn from yesterday live for today hope for tomorrow
-life is what happens when you are busy making other plans look before you
-leap but he who hesitates is lost make hay while the sun shines man cannot
-live by bread alone many hands make light work mind over matter misery loves
-company mistakes are proof that you are trying more haste less speed no guts
-no glory nothing ventured nothing gained old habits die hard once in a blue
-moon one man trash is another man treasure opportunity knocks only once out
-of sight out of mind patience is a virtue people who live in glass houses
-should not throw stones perseverance is the key to success power corrupts and
-absolute power corrupts absolutely pride comes before a fall put your best
-foot forward rising tides lift all boats seek and you shall find slow and
-steady wins the race smooth seas do not make skillful sailors still waters
-run deep success is not final failure is not fatal it is the courage to
-continue that counts take the bull by the horns the bigger they are the
-harder they fall the journey of a thousand miles begins with a single step
-the more things change the more they stay the same the only way to do great
-work is to love what you do the road to hell is paved with good intentions
-the squeaky wheel gets the grease there are two sides to every story think
-before you speak those who cannot remember the past are condemned to repeat it
-through thick and thin time heals all wounds to err is human to forgive divine
-too many cooks spoil the broth truth is stranger than fiction two heads are
-better than one waste not want not what does not kill you makes you stronger
-when life gives you lemons make lemonade where there is a will there is a way
-wisdom comes with age words cut deeper than swords work smarter not harder
-yesterday is history tomorrow is a mystery today is a gift that is why it
-is called the present you miss one hundred percent of the shots you do not take
-`.trim().split(/\s+/).filter(Boolean);
+const STORY_PARAGRAPHS = [
+  `At the edge of Willow Marsh there was a crooked wooden sign that pointed toward the oldest trail in the reeds. Most travelers ignored it because the paint had faded and the path beyond it looked half swallowed by moss, but Mara stopped every time she passed. When she was small, her grandfather told her the trail led to a bell tower in the middle of the wetland, and that the bell rang only for people who had lost something they could not name. Years later, after his boat drifted home empty and the village stopped speaking about where he had gone, Mara began to wonder if the story had been less of a tale and more of a warning. On the first cold morning of autumn, she packed a loaf of dark bread, a brass compass, and a coil of twine, then stepped through the reeds before the rest of the town had even opened its shutters.`,
+  `The marsh woke slowly around her. Frogs clicked in the water like tiny gears turning, dragonflies flashed over the pools, and the mud tried to keep her boots as if it wanted company. Mara followed the trail by the broken boards that rose above the shallow water in uncertain intervals. Some planks tilted under her weight, some sank, and some had split so cleanly that she had to balance across the beams beneath. Every few minutes she tied a short piece of twine to a branch, not because she feared getting lost, but because her grandfather had always said a path looks different when you are leaving than when you are arriving. The compass needle trembled instead of settling north. She slipped it back into her pocket and trusted the sign, the boards, and the feeling that the marsh had been waiting for her longer than she had been willing to admit.`,
+  `Near noon she reached a patch of still water so smooth it held the sky without a wrinkle. A narrow skiff floated there, tethered to a stump by a rope that looked new despite the age of everything around it. A boy no older than sixteen sat in the stern repairing a net with patient hands. He looked up as if he had expected her at that exact moment. His name was Elian, and he said he ferried people between places that were close together on the map but far apart in every other sense. Mara almost laughed at the strangeness of that answer, yet she stepped into the skiff anyway. The boat moved with a single push, gliding over the water without sound. As the shoreline receded, the air grew cooler, and the marsh grass bent toward them in a silent bow that made Mara keep both hands tight around the edge of the seat.`,
+  `Elian did not ask why she had come until the skiff entered a corridor of reeds taller than houses. Light narrowed into green strips, and the world smelled of rain though the sky above remained clear. Mara told him about her grandfather, about the empty boat, and about the bell tower from the old story. Elian listened without interruption. When she had finished, he nodded once and said that the tower did exist, but people rarely found what they expected there. Some arrived wanting answers and left with responsibility. Others came seeking the past and discovered the future standing in its place. Before Mara could ask what that meant, the skiff emerged into a wide basin where the water darkened almost to black. In the center stood an island of stone, and on it rose the bell tower, pale and narrow, with vines climbing its sides like writing in a language the marsh had invented for itself.`,
+  `The island had no dock, only a ring of old steps descending into the water. Mara climbed them carefully, noticing that each stone was carved with tiny scenes: a lantern in a storm, a hand opening a gate, a heron lifting from the reeds. The carvings looked worn by centuries of touch. Elian stayed in the skiff. He said the tower admitted only those who were willing to hear it honestly, and that honesty was usually lonelier than people imagined. Mara told him she had not crossed a living marsh to turn back at a staircase. He smiled at that, though there was pity in it. The tower door stood partly open. Inside, the air was dry and cool, carrying the faint smell of cedar and dust. A spiral stair wound upward around a hollow center where light from unseen windows drifted down in pale shafts.`,
+  `On the first landing she found a room lined with shelves of glass jars. Inside each jar rested something too ordinary to belong in a place like this: a thimble, a matchbox, a school ribbon, a cracked button, a dried sprig of mint. A brass plaque on the wall read, Things surrendered so other things could be kept. Mara walked the room slowly, feeling the strange ache that certain objects carry when they are tied to memories no one else can see. At the far end sat a jar containing a brass fishing hook with a red thread knotted through the eye. Her breath caught. She remembered her grandfather using hooks exactly like that, red thread and all, because he claimed fish respected a little color. Yet when she reached for the jar, the glass was warm, and a voice from somewhere above said, Not yet, in a tone so gentle it unsettled her more than a shout would have.`,
+  `She climbed higher. The second landing held a chamber whose walls were covered in maps. None showed kingdoms or roads. Instead they charted moments. One map traced every place in the marsh where someone had changed their mind. Another marked where promises had been made and where they had later been broken. A third glimmered faintly with silver ink and seemed to record acts of courage too small for history to notice: a child admitting fear, a widow opening her door to strangers during a flood, a baker giving away the last loaf on a winter evening. Mara stood before that map longer than she meant to. She had always imagined courage as a single grand act, the kind that songs preferred. The tower suggested otherwise. It seemed to believe that lives turned on quiet decisions more often than heroic declarations, and she could not decide whether that comforted or accused her.`,
+  `The stair ended beneath the bell chamber, where a narrow room opened toward the west through a row of tall arched windows. There she found a table set for one, with bread still warm, a knife, a pitcher of water, and a folded note addressed in her grandfather's unmistakable hand. She broke the seal with shaking fingers. The letter was brief. He wrote that he had come to the tower many years ago looking for a way to save the marsh from the slow greed of neighboring towns that wanted to drain it and build straight roads over everything soft and living. The tower had offered him a bargain: one guardian for one protected place. He accepted, knowing the village would call it disappearance because that would be easier to bear than the truth. If Mara was reading his words, he wrote, then his watch was ending, and the marsh had decided whom it trusted next.`,
+  `She lowered the note and stared through the windows at the wetland spreading in every direction like a breathing green sea. Anger came first because love often arrives wearing that mask when it has been denied the chance to say goodbye. She was angry that he had chosen silence, angry that he had turned a story into an inheritance, and angry that some hidden part of her already knew why he had done it. Down below, small ripples crossed the black basin where the skiff waited. Clouds gathered over the reeds, and the light shifted from gold to pewter. The bell rope hung beside the stair, thick with age and polished by hands. She touched it once. The fibers were warm, alive with a faint hum that seemed to pass from her palm into her shoulder and settle behind her ribs like a second heartbeat.`,
+  `When Mara climbed into the bell chamber, she found no giant bronze bell suspended overhead as she had imagined. Instead the room was open to the sky, and in its center floated a ring of water held in the air by nothing she could understand. The surface reflected not the clouds above but scenes from the marsh below. She saw turtles crossing hidden channels, reeds bending around nesting birds, fish schooling through roots, and children from the village chasing one another along the bank on summer evenings. Then the reflection shifted and showed the future that might come without a guardian: smoke, dredged mud, dead water, houses on stilts built where lilies used to bloom. Mara realized the bell was not made to call people together. It was made to keep a promise between land and whoever loved it enough to remain.`,
+  `The sound began before she pulled the rope. It rose from the stones, the water, the wood of the stair, and the marrow of her own bones, a deep clear tone that seemed older than language. When she finally drew the rope down, the note on the table below lifted in the wind, and every jar in the lower room flashed like a row of waking eyes. Out on the basin, Elian removed his cap and bowed his head. The bell did not deafen. It clarified. Mara heard the marsh answer in a thousand small voices: wings beating from sedge beds, frogs calling in rough rhythm, water folding against roots. Beneath all of it she heard another sound, familiar and impossible, her grandfather laughing as he did when a storm broke exactly where he had predicted. The laugh carried no sorrow. It carried relief, and with it came the understanding that he was not asking forgiveness, only continuation.`,
+  `By dusk the bargain had settled. Mara felt it in the way the paths of the marsh arranged themselves behind her eyes, as if she now carried an invisible map that shifted with rain, moonlight, and season. She knew where the herons nested, where the deepest springs rose, and where strangers could walk safely if they came with respect. She also knew which parts of the wetland would refuse them if they came with hunger for ownership. When she descended to the island steps, Elian was waiting with the skiff untied. He asked no dramatic question. He only looked at her and said, Will you stay. Mara looked back toward the tower, then toward the village hidden beyond miles of reeds. She thought of warm kitchens, ordinary mornings, and the version of life she had expected to live. Then she thought of the black water holding stars, of maps made from courage, and of promises too important to survive unattended.`,
+  `I will stay, she said, and the words felt less like surrender than recognition. Elian ferried her not back to the village but to a small house raised on cedar posts where the marsh grass grew right up to the threshold. Inside were dry blankets, stacks of ledgers, and windows on every wall. It was a keeper's house, though simpler than she expected. On the desk lay a notebook filled with her grandfather's neat handwriting. The first pages recorded tides, bird migrations, and weather, but farther in he had written stories about villagers who never knew they had been protected: a child lured away from thin ice by a sudden flock of swans, a fire diverted by an overnight fog, a surveyor who lost his way long enough to abandon a harmful plan. Mara read until moonrise silvered the room. By the time she closed the notebook, grief had changed shape. It no longer felt like a hole. It felt like a door she would spend the rest of her life learning how to walk through.`,
+  `Weeks passed, then months. Winter lowered itself over Willow Marsh in clean white silence, and Mara learned the labor hidden inside wonder. Guardianship was not all visions and bells. It was patching footbridges after storms, guiding lost travelers home without letting them know they had been in danger, and listening to the marsh closely enough to notice the difference between ordinary change and true harm. She sent anonymous baskets of fish and herbs to households that struggled. She frightened off speculators with rumors, inconveniences, and once, when necessary, a night chorus of frogs so loud that a team of engineers abandoned their tents before dawn. When spring returned, the village spoke of the marsh with renewed caution and respect. Some said the wetland had grown moody. Others said it had grown kind. Mara, watching sunrise from the keeper's porch, understood that both were true. Wild places are gentle only when gentleness is wise.`,
+  `Years later, when children asked about the bell tower, Mara never answered too quickly. She told them the marsh keeps what is entrusted to it and reveals itself only to those who arrive with patience. She told them every place worth loving asks something in return, even if the payment is only attention. Sometimes she pointed down the old trail and let curiosity do the rest. Most children ran back after a few hundred yards, laughing and muddy. A few came farther. One summer evening, as fireflies stitched green light through the reeds, Mara saw a girl pause at the faded sign with the same thoughtful stillness she herself had once possessed. The girl carried a loaf of bread under one arm and looked toward the hidden path as if listening for a distant tone. Mara smiled but said nothing. The marsh did not need her to force the story onward. It only needed her to keep it alive until the next rightful listener was ready to hear the bell.`
+];
+
+function splitWords(text: string): string[] {
+  return text.trim().split(/\s+/).filter(Boolean);
+}
 
 export function generateText(targetWordCount: number): string {
+  const story = STORY_PARAGRAPHS.join("\n\n");
+  const storyWords = splitWords(story);
+
+  if (targetWordCount <= storyWords.length) {
+    return storyWords.slice(0, targetWordCount).join(" ");
+  }
+
   const words: string[] = [];
   while (words.length < targetWordCount) {
-    const w = WORD_POOL[Math.floor(Math.random() * WORD_POOL.length)];
-    words.push(w);
+    words.push(...storyWords);
   }
 
-  // Group into sentences of 8–14 words
-  const sentences: string[] = [];
-  let i = 0;
-  while (i < words.length) {
-    const len = 8 + Math.floor(Math.random() * 7); // 8–14
-    const chunk = words.slice(i, i + len);
-    if (chunk.length === 0) break;
-    const sentence =
-      chunk[0].charAt(0).toUpperCase() + chunk[0].slice(1) +
-      " " +
-      chunk.slice(1).join(" ") +
-      ".";
-    sentences.push(sentence);
-    i += len;
-  }
-
-  return sentences.join(" ");
+  return words.slice(0, targetWordCount).join(" ");
 }
